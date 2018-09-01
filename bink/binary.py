@@ -1,17 +1,18 @@
 import sys
 import struct
+from enum import Enum
 
 
-class Endian:
+class Endian(Enum):
     LITTLE = 1
     BIG = 2
     NATIVE = LITTLE if sys.byteorder == "little" else BIG
 
 
-def parse_from_format(frmt, _bytes, endianess=None):
-    if endianess is None:
-        endianess = Endian.NATIVE
-    endian_str = "<" if endianess == Endian.LITTLE else ">"
+def _parse_from_format(frmt, _bytes, endianness=None):
+    if endianness is None:
+        endianness = Endian.NATIVE
+    endian_str = "<" if endianness == Endian.LITTLE else ">"
     combined_format = endian_str + frmt
 
     calced_size = struct.calcsize(combined_format)
@@ -22,10 +23,10 @@ def parse_from_format(frmt, _bytes, endianess=None):
     return struct.unpack(combined_format, _bytes)[0]
 
 
-def dump_from_format(frmt, value, endianess=None):
-    if endianess is None:
-        endianess = Endian.native()
-    endian_str = "<" if endianess == Endian.LITTLE else ">"
+def _dump_from_format(frmt, value, endianness=None):
+    if endianness is None:
+        endianness = Endian.NATIVE
+    endian_str = "<" if endianness == Endian.LITTLE else ">"
     combined_format = endian_str + frmt
     return struct.pack(combined_format, value)
 
@@ -45,43 +46,43 @@ FLOAT64_FORMAT = "d"
 
 
 def parse_int8(byte):
-    return parse_from_format(INT8_FORMAT, byte)
+    return _parse_from_format(INT8_FORMAT, byte)
 
 
 def parse_int16(_bytes, endianness=None):
-    return parse_from_format(INT16_FORMAT, _bytes, endianness)
+    return _parse_from_format(INT16_FORMAT, _bytes, endianness)
 
 
 def parse_int32(_bytes, endianness=None):
-    return parse_from_format(INT32_FORMAT, _bytes, endianness)
+    return _parse_from_format(INT32_FORMAT, _bytes, endianness)
 
 
 def parse_int64(_bytes, endianness=None):
-    return parse_from_format(INT64_FORMAT, _bytes, endianness)
+    return _parse_from_format(INT64_FORMAT, _bytes, endianness)
 
 
 def parse_uint8(byte):
-    return parse_from_format(UINT8_FORMAT, byte)
+    return _parse_from_format(UINT8_FORMAT, byte)
 
 
 def parse_uint16(_bytes, endianness=None):
-    return parse_from_format(UINT16_FORMAT, _bytes, endianness)
+    return _parse_from_format(UINT16_FORMAT, _bytes, endianness)
 
 
 def parse_uint32(_bytes, endianness=None):
-    return parse_from_format(UINT32_FORMAT, _bytes, endianness)
+    return _parse_from_format(UINT32_FORMAT, _bytes, endianness)
 
 
 def parse_uint64(_bytes, endianness=None):
-    return parse_from_format(UINT64_FORMAT, _bytes, endianness)
+    return _parse_from_format(UINT64_FORMAT, _bytes, endianness)
 
 
 def parse_float32(_bytes, endianness=None):
-    return parse_from_format(FLOAT32_FORMAT, _bytes, endianness)
+    return _parse_from_format(FLOAT32_FORMAT, _bytes, endianness)
 
 
 def parse_float64(_bytes, endianness=None):
-    return parse_from_format(FLOAT64_FORMAT, _bytes, endianness)
+    return _parse_from_format(FLOAT64_FORMAT, _bytes, endianness)
 
 
 def parse_bool(byte):
@@ -89,43 +90,43 @@ def parse_bool(byte):
 
 
 def dump_int8(value):
-    return dump_from_format(INT8_FORMAT, value, None)
+    return _dump_from_format(INT8_FORMAT, value, None)
 
 
 def dump_int16(value, endianness=None):
-    return dump_from_format(INT16_FORMAT, value, endianness)
+    return _dump_from_format(INT16_FORMAT, value, endianness)
 
 
 def dump_int32(value, endianness=None):
-    return dump_from_format(INT32_FORMAT, value, endianness)
+    return _dump_from_format(INT32_FORMAT, value, endianness)
 
 
 def dump_int64(value, endianness=None):
-    return dump_from_format(INT64_FORMAT, value, endianness)
+    return _dump_from_format(INT64_FORMAT, value, endianness)
 
 
 def dump_uint8(value):
-    return dump_from_format(UINT8_FORMAT, value, None)
+    return _dump_from_format(UINT8_FORMAT, value, None)
 
 
 def dump_uint16(value, endianness=None):
-    return dump_from_format(UINT16_FORMAT, value, endianness)
+    return _dump_from_format(UINT16_FORMAT, value, endianness)
 
 
 def dump_uint32(value, endianness=None):
-    return dump_from_format(UINT32_FORMAT, value, endianness)
+    return _dump_from_format(UINT32_FORMAT, value, endianness)
 
 
 def dump_uint64(value, endianness=None):
-    return dump_from_format(UINT64_FORMAT, value, endianness)
+    return _dump_from_format(UINT64_FORMAT, value, endianness)
 
 
 def dump_float32(value, endianness=None):
-    return dump_from_format(FLOAT32_FORMAT, value, endianness)
+    return _dump_from_format(FLOAT32_FORMAT, value, endianness)
 
 
 def dump_float64(value, endianness=None):
-    return dump_from_format(FLOAT64_FORMAT, value, endianness)
+    return _dump_from_format(FLOAT64_FORMAT, value, endianness)
 
 
 def dump_bool(value):
@@ -133,8 +134,11 @@ def dump_bool(value):
 
 
 class BinaryStream:
-    def __init__(self, _bytes):
+    def __init__(self, _bytes, endianness=None):
+        if endianness is None:
+            endianness = Endian.NATIVE
         self._bytes = _bytes
+        self.endianness = endianness
         self._index = 0
 
     def length(self):
@@ -156,8 +160,8 @@ class BinaryStream:
 
 
 class BinaryReader(BinaryStream):
-    def __init__(self, _bytes):
-        super().__init__(_bytes)
+    def __init__(self, _bytes, endianness=None):
+        super().__init__(_bytes, endianness)
 
     def read(self, count):
         to_read = min(count, self.remaining())
@@ -181,121 +185,58 @@ class BinaryReader(BinaryStream):
             raise ValueError(msg)
         return _read
 
-    def read_int8(self):
-        return parse_int8(self.strict_read(1))
+    def read_int8(self, count=1):
+        return self._read_values(parse_int8, 1, count, False)
 
-    def read_int16(self, endianness=None):
-        return parse_int16(self.strict_read(2), endianness)
+    def read_int16(self, count=1):
+        return self._read_values(parse_int16, 2, count)
 
-    def read_int32(self, endianness=None):
-        return parse_int32(self.strict_read(4), endianness)
+    def read_int32(self, count=1):
+        return self._read_values(parse_int32, 4, count)
 
-    def read_int64(self, endianness=None):
-        return parse_int64(self.strict_read(8), endianness)
+    def read_int64(self, count=1):
+        return self._read_values(parse_int64, 8, count)
 
-    def read_uint8(self):
-        return parse_uint8(self.strict_read(1))
+    def read_uint8(self, count=1):
+        return self._read_values(parse_uint8, 1, count, False)
 
-    def read_uint16(self, endianness=None):
-        return parse_uint16(self.strict_read(2), endianness)
+    def read_uint16(self, count=1):
+        return self._read_values(parse_uint16, 2, count)
 
-    def read_uint32(self, endianness=None):
-        return parse_uint32(self.strict_read(4), endianness)
+    def read_uint32(self, count=1):
+        return self._read_values(parse_uint32, 4, count)
 
-    def read_uint64(self, endianness=None):
-        return parse_uint64(self.strict_read(8), endianness)
+    def read_uint64(self, count=1):
+        return self._read_values(parse_uint64, 8, count)
 
-    def read_float32(self, endianness=None):
-        return parse_float32(self.strict_read(4), endianness)
+    def read_float32(self, count=1):
+        return self._read_values(parse_float32, 4, count)
 
-    def read_float64(self, endianness=None):
-        return parse_float64(self.strict_read(8), endianness)
+    def read_float64(self, count=1):
+        return self._read_values(parse_float64, 8, count)
 
-    def read_bool(self):
-        return parse_bool(self.strict_read(1))
+    def read_bool(self, count=1):
+        return self._read_values(parse_bool, 1, count, False)
 
-    def read_size_prefixed_int8(self):
-        count = self.read_int8()
-        return self.strict_read(count)
-
-    def read_size_prefixed_int16(self, endianness=None):
-        return self._read_size_prefixed(self.read_int16, endianness)
-
-    def read_size_prefixed_int32(self, endianness=None):
-        return self._read_size_prefixed(self.read_int32, endianness)
-
-    def read_size_prefixed_int64(self, endianness=None):
-        return self._read_size_prefixed(self.read_int64, endianness)
-
-    def read_size_prefixed_uint8(self):
-        count = self.read_uint8()
-        return self.strict_read(count)
-
-    def read_size_prefixed_uint16(self, endianness=None):
-        return self._read_size_prefixed(self.read_uint16, endianness)
-
-    def read_size_prefixed_uint32(self, endianness=None):
-        return self._read_size_prefixed(self.read_uint32, endianness)
-
-    def read_size_prefixed_uint64(self, endianness=None):
-        return self._read_size_prefixed(self.read_uint64, endianness)
-
-    def _read_size_prefixed(self, read_func, endianness):
-        count = read_func(endianness)
-        return self.strict_read(count)
-
-    def read_string(self, length, encoding=None):
-        if encoding is None:
-            encoding = "utf-8"
-        return self.strict_read(length).decode(encoding)
-
-    def read_prefixed_string_int8(self, encoding=None):
-        length = self.read_int8()
-        return self.read_string(length, encoding)
-
-    def read_prefixed_string_int16(self, endianness=None, encoding=None):
-        return self._read_prefixed_string(self.read_int16,
-            endianness, encoding)
-
-    def read_prefixed_string_int32(self, endianness=None, encoding=None):
-        return self._read_prefixed_string(self.read_int32,
-            endianness, encoding)
-
-    def read_prefixed_string_int64(self, endianness=None, encoding=None):
-        return self._read_prefixed_string(self.read_int64,
-            endianness, encoding)
-
-    def read_prefixed_string_uint8(self, encoding=None):
-        length = self.read_uint8()
-        return self.read_string(length, encoding)
-
-    def read_prefixed_string_uint16(self, endianness=None, encoding=None):
-        return self._read_prefixed_string(self.read_uint16,
-            endianness, encoding)
-
-    def read_prefixed_string_uint32(self, endianness=None, encoding=None):
-        return self._read_prefixed_string(self.read_uint32,
-            endianness, encoding)
-
-    def read_prefixed_string_uint64(self, endianness=None, encoding=None):
-        return self._read_prefixed_string(self.read_uint64,
-            endianness, encoding)
-
-    def _read_prefixed_string(self, read_func, endianness, encoding):
-        length = read_func(endianness)
-        return self.read_string(length, encoding)
+    def _read_values(self, parse_func, length, count, endian=True):
+        assert length > 0
+        assert count > 0
+        _values = []
+        for i in range(count):
+            if endian:
+                _values.append(
+                    parse_func(self.strict_read(length), self.endianness))
+            else:
+                _values.append(parse_func(self.strict_read(length)))
+        if len(_values) == 1:
+            return _values[0]
+        else:
+            return _values
 
 
 class BinaryWriter(BinaryStream):
-    def __init__(self, endianness=Endian.native()):
-        self.endianness = endianness
-        super().__init__(bytes())
-
-    def _to_collection(self, value):
-        if isinstance(value, (list, tuple)):
-            return value
-        else:
-            return tuple([value])
+    def __init__(self, endianness=None):
+        super().__init__(bytes(), endianness)
 
     def clear(self):
         self.seek(0)
@@ -353,70 +294,8 @@ class BinaryWriter(BinaryStream):
         for value in converted_values:
             self.write_bytes(dump_func(value, self.endianness))
 
-    def write_bytes_int8(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_int8)
-
-    def write_bytes_int16(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_int16)
-
-    def write_bytes_int32(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_int32)
-
-    def write_bytes_int64(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_int64)
-
-    def write_bytes_uint8(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_uint8)
-
-    def write_bytes_uint16(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_uint16)
-
-    def write_bytes_uint32(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_uint32)
-
-    def write_bytes_uint64(self, bytes_collection):
-        self._write_prefixed_bytes(bytes_collection, self.write_uint64)
-
-    def _write_prefixed_bytes(self, bytes_collection, write_func):
-        converted_bytes = self._to_collection(bytes_collection)
-        for _bytes in converted_bytes:
-            write_func(len(_bytes))
-            self.write_bytes(_bytes)
-
-    def write_string(self, strings, encoding="utf-8"):
-        converted_strings = self._to_collection(strings)
-        for _string in converted_strings:
-            self.write_bytes(_string.encode(encoding=encoding))
-
-    def write_string_int8(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_int8, encoding)
-
-    def write_string_int16(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_int16, encoding)
-
-    def write_string_int32(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_int32, encoding)
-
-    def write_string_int64(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_int64, encoding)
-
-    def write_string_uint8(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_uint8, encoding)
-
-    def write_string_uint16(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_uint16,
-            encoding)
-
-    def write_string_uint32(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_uint32,
-            encoding)
-
-    def write_string_uint64(self, strings, encoding="utf-8"):
-        self._write_prefixed_strings(strings, self.write_bytes_uint64,
-            encoding)
-
-    def _write_prefixed_strings(self, strings, write_prefixed_func,
-    encoding="utf-8"):
-        converted_strings = self._to_collection(strings)
-        for _string in converted_strings:
-            write_prefixed_func(_string.encode(encoding=encoding))
+    def _to_collection(self, value):
+        if isinstance(value, (list, tuple)):
+            return value
+        else:
+            return tuple([value])
