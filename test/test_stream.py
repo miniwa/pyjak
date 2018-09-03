@@ -1,8 +1,7 @@
 import struct
-import sys
 import pytest
-from bink.binary import (Endian, parse_int32, parse_uint32, dump_int32,
-    dump_uint32, BinaryStream, BinaryReader, BinaryWriter)
+from bink.endian import Endian
+from bink.stream import BinaryStream, BinaryReader, BinaryWriter
 
 
 _int = -255
@@ -15,54 +14,6 @@ _uint = 255
 _uint_bytes = struct.pack("=I", _uint)
 _uint_bytes_little = struct.pack("<I", _uint)
 _uint_bytes_big = struct.pack(">I", _uint)
-
-
-class TestEndian:
-    def test_native(self):
-        if sys.byteorder == "little":
-            assert Endian.NATIVE == Endian.LITTLE
-        else:
-            assert Endian.NATIVE == Endian.BIG
-
-
-class TestParse:
-    def test_parse_int32(self):
-        assert parse_int32(_int_bytes) == _int
-
-    def test_parse_int32_little(self):
-        assert parse_int32(_int_bytes_little, Endian.LITTLE) == _int
-
-    def test_parse_int32_big(self):
-        assert parse_int32(_int_bytes_big, Endian.BIG) == _int
-
-    def test_parse_uint32(self):
-        assert parse_uint32(_uint_bytes) == _uint
-
-    def test_parse_uint32_little(self):
-        assert parse_uint32(_uint_bytes_little, Endian.LITTLE) == _uint
-
-    def test_parse_uint32_big(self):
-        assert parse_uint32(_uint_bytes_big, Endian.BIG) == _uint
-
-
-class TestDump:
-    def test_dump_int32(self):
-        assert dump_int32(_int) == _int_bytes
-
-    def test_dump_int32_little(self):
-        assert dump_int32(_int, Endian.LITTLE) == _int_bytes_little
-
-    def test_dump_int32_big(self):
-        assert dump_int32(_int, Endian.BIG) == _int_bytes_big
-
-    def test_dump_uint32(self):
-        assert dump_uint32(_uint) == _uint_bytes
-
-    def test_dump_uint32_little(self):
-        assert dump_uint32(_uint, Endian.LITTLE) == _uint_bytes_little
-
-    def test_dump_uint32_big(self):
-        assert dump_uint32(_uint, Endian.BIG) == _uint_bytes_big
 
 
 class TestBinaryStream:
