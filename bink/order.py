@@ -6,7 +6,7 @@ class ByteOrder(Enum):
     """
     Enumeration of byte orders.
     """
-    # Represents a little endian byte order.    
+    # Represents a little endian byte order.
     LITTLE = 1
 
     # Represents a big endian byte order.

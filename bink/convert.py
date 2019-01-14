@@ -435,8 +435,8 @@ def _dump_from_format(_format, value, order=None):
                 "Expected object of number-like type, not '{0}'."
                 .format(type(value).__name__))
         # Hack to check if error was caused by argument out of bounds.
-        elif (msg == _STRUCT_ARG_OOR1 or _STRUCT_ARG_OOR2.search(msg)
-                or msg == _STRUCT_ARG_TOO_LARGE):
+        elif (msg == _STRUCT_ARG_OOR1 or _STRUCT_ARG_OOR2.search(msg) or
+                msg == _STRUCT_ARG_TOO_LARGE):
             _raise_mismatch(fixed_format, value)
         else:
             raise BinaryError(

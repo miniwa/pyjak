@@ -2,7 +2,7 @@ import pytest
 import re
 import struct
 from bink.order import ByteOrder
-from bink.parse import (
+from bink.convert import (
     BinaryError, BinarySizeMismatch, parse_int8, parse_int16,
     parse_int32,
     parse_int64, parse_uint8, parse_uint16, parse_uint32, parse_uint64,
@@ -424,7 +424,8 @@ class TestDumpFloat32:
         assert dump_float32(_FLOAT32) == _FLOAT32_BYTES
 
     def test_dump_float32_little(self):
-        assert dump_float32(_FLOAT32, ByteOrder.LITTLE) == _FLOAT32_BYTES_LITTLE
+        assert dump_float32(
+            _FLOAT32, ByteOrder.LITTLE) == _FLOAT32_BYTES_LITTLE
 
     def test_dump_float32_big(self):
         assert dump_float32(_FLOAT32, ByteOrder.BIG) == _FLOAT32_BYTES_BIG
@@ -449,7 +450,8 @@ class TestDumpFloat64:
         assert dump_float64(_FLOAT64) == _FLOAT64_BYTES
 
     def test_dump_float64_little(self):
-        assert dump_float64(_FLOAT64, ByteOrder.LITTLE) == _FLOAT64_BYTES_LITTLE
+        assert dump_float64(
+            _FLOAT64, ByteOrder.LITTLE) == _FLOAT64_BYTES_LITTLE
 
     def test_dump_float64_big(self):
         assert dump_float64(_FLOAT64, ByteOrder.BIG) == _FLOAT64_BYTES_BIG
