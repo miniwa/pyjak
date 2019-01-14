@@ -19,7 +19,7 @@ FLOAT64_FORMAT = "d"
 
 STRUCT_ARG_OOR1 = "argument out of range"
 STRUCT_ARG_OOR2 = re.compile(
-    "format requires \(?-?\d+\)? <= number <= \(?-?\d+\)?")
+    "<= number <=")
 STRUCT_ARG_TOO_LARGE = "int too large to convert"
 STRUCT_TYPE_MISMATCH_REGEX = re.compile(
     "required argument is not (an|a) (integer|float)")
