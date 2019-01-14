@@ -1,4 +1,4 @@
-from bink.endian import Endian
+from bink.order import ByteOrder
 from bink.parse import (parse_int8, parse_int16, parse_int32, parse_int64,
     parse_uint8, parse_uint16, parse_uint32, parse_uint64,
     parse_float32, parse_float64, parse_bool, dump_int8, dump_int16,
@@ -9,7 +9,7 @@ from bink.parse import (parse_int8, parse_int16, parse_int32, parse_int64,
 class BinaryStream:
     def __init__(self, _bytes, endianness=None):
         if endianness is None:
-            endianness = Endian.NATIVE
+            endianness = ByteOrder.NATIVE
         self._bytes = _bytes
         self.endianness = endianness
         self._index = 0

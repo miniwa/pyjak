@@ -1,7 +1,7 @@
 import pytest
 import re
 import struct
-from bink.endian import Endian
+from bink.order import ByteOrder
 from bink.parse import (
     BinaryError, BinarySizeMismatch, parse_int8, parse_int16,
     parse_int32,
@@ -120,7 +120,7 @@ class ParseBase:
             self.parse_func(_MISMATCH_BYTES)
 
 
-class ParseEndianBase(ParseBase):
+class ParseByteOrderBase(ParseBase):
     _VALUE_MAX_BYTES_LITTLE = None
     _VALUE_MAX_BYTES_BIG = None
 
@@ -135,11 +135,11 @@ class ParseEndianBase(ParseBase):
 
     def test_parse_little(self):
         assert self.parse_func(
-            self.value_max_bytes_little, Endian.LITTLE) == self.value_max
+            self.value_max_bytes_little, ByteOrder.LITTLE) == self.value_max
 
     def test_parse_big(self):
         assert self.parse_func(
-            self.value_max_bytes_big, Endian.BIG) == self.value_max
+            self.value_max_bytes_big, ByteOrder.BIG) == self.value_max
 
 
 class TestParseInt8(ParseBase):
@@ -158,7 +158,7 @@ class TestParseUInt8(ParseBase):
     _VALUE_MAX_BYTES = _UINT8_MAX_BYTES
 
 
-class TestParseInt16(ParseEndianBase):
+class TestParseInt16(ParseByteOrderBase):
     _PARSE_FUNC = parse_int16
     _VALUE_MIN = _INT16_MIN
     _VALUE_MAX = _INT16_MAX
@@ -168,7 +168,7 @@ class TestParseInt16(ParseEndianBase):
     _VALUE_MAX_BYTES_BIG = _INT16_MAX_BYTES_BIG
 
 
-class TestParseUInt16(ParseEndianBase):
+class TestParseUInt16(ParseByteOrderBase):
     _PARSE_FUNC = parse_uint16
     _VALUE_MIN = _UINT16_MIN
     _VALUE_MAX = _UINT16_MAX
@@ -178,7 +178,7 @@ class TestParseUInt16(ParseEndianBase):
     _VALUE_MAX_BYTES_BIG = _UINT16_MAX_BYTES_BIG
 
 
-class TestParseInt32(ParseEndianBase):
+class TestParseInt32(ParseByteOrderBase):
     _PARSE_FUNC = parse_int32
     _VALUE_MIN = _INT32_MIN
     _VALUE_MAX = _INT32_MAX
@@ -188,7 +188,7 @@ class TestParseInt32(ParseEndianBase):
     _VALUE_MAX_BYTES_BIG = _INT32_MAX_BYTES_BIG
 
 
-class TestParseUInt32(ParseEndianBase):
+class TestParseUInt32(ParseByteOrderBase):
     _PARSE_FUNC = parse_uint32
     _VALUE_MIN = _UINT32_MIN
     _VALUE_MAX = _UINT32_MAX
@@ -198,7 +198,7 @@ class TestParseUInt32(ParseEndianBase):
     _VALUE_MAX_BYTES_BIG = _UINT32_MAX_BYTES_BIG
 
 
-class TestParseInt64(ParseEndianBase):
+class TestParseInt64(ParseByteOrderBase):
     _PARSE_FUNC = parse_int64
     _VALUE_MIN = _INT64_MIN
     _VALUE_MAX = _INT64_MAX
@@ -208,7 +208,7 @@ class TestParseInt64(ParseEndianBase):
     _VALUE_MAX_BYTES_BIG = _INT64_MAX_BYTES_BIG
 
 
-class TestParseUInt64(ParseEndianBase):
+class TestParseUInt64(ParseByteOrderBase):
     _PARSE_FUNC = parse_uint64
     _VALUE_MIN = _UINT64_MIN
     _VALUE_MAX = _UINT64_MAX
@@ -224,11 +224,11 @@ class TestParseFloat32:
 
     def test_parse_float32_little(self):
         assert parse_float32(
-            _FLOAT32_BYTES_LITTLE, Endian.LITTLE) == pytest.approx(_FLOAT32)
+            _FLOAT32_BYTES_LITTLE, ByteOrder.LITTLE) == pytest.approx(_FLOAT32)
 
     def test_parse_float32_big(self):
         assert parse_float32(
-            _FLOAT32_BYTES_BIG, Endian.BIG) == pytest.approx(_FLOAT32)
+            _FLOAT32_BYTES_BIG, ByteOrder.BIG) == pytest.approx(_FLOAT32)
 
     def test_parse_float32_raises_type_error_on_none(self):
         with pytest.raises(TypeError, match=_TYPE_ERROR_PARSE_REGEX):
@@ -249,11 +249,11 @@ class TestParseFloat64:
 
     def test_parse_float64_little(self):
         assert parse_float64(
-            _FLOAT64_BYTES_LITTLE, Endian.LITTLE) == pytest.approx(_FLOAT64)
+            _FLOAT64_BYTES_LITTLE, ByteOrder.LITTLE) == pytest.approx(_FLOAT64)
 
     def test_parse_float64_big(self):
         assert parse_float64(
-            _FLOAT64_BYTES_BIG, Endian.BIG) == pytest.approx(_FLOAT64)
+            _FLOAT64_BYTES_BIG, ByteOrder.BIG) == pytest.approx(_FLOAT64)
 
     def test_parse_float64_raises_type_error_on_none(self):
         with pytest.raises(TypeError, match=_TYPE_ERROR_PARSE_REGEX):
@@ -321,7 +321,7 @@ class DumpBase:
             self.dump_func(self.value_max + 1)
 
 
-class DumpEndianBase(DumpBase):
+class DumpByteOrderBase(DumpBase):
     _VALUE_MAX_BYTES_LITTLE = None
     _VALUE_MAX_BYTES_BIG = None
 
@@ -336,11 +336,11 @@ class DumpEndianBase(DumpBase):
 
     def test_dump_little(self):
         assert self.dump_func(
-            self.value_max, Endian.LITTLE) == self.value_max_bytes_little
+            self.value_max, ByteOrder.LITTLE) == self.value_max_bytes_little
 
     def test_dump_big(self):
         assert self.dump_func(
-            self.value_max, Endian.BIG) == self.value_max_bytes_big
+            self.value_max, ByteOrder.BIG) == self.value_max_bytes_big
 
 
 class TestDumpInt8(DumpBase):
@@ -359,7 +359,7 @@ class TestDumpUInt8(DumpBase):
     _VALUE_MAX_BYTES = _UINT8_MAX_BYTES
 
 
-class TestDumpInt16(DumpEndianBase):
+class TestDumpInt16(DumpByteOrderBase):
     _DUMP_FUNC = dump_int16
     _VALUE_MIN = _INT16_MIN
     _VALUE_MAX = _INT16_MAX
@@ -369,7 +369,7 @@ class TestDumpInt16(DumpEndianBase):
     _VALUE_MAX_BYTES_BIG = _INT16_MAX_BYTES_BIG
 
 
-class TestDumpUInt16(DumpEndianBase):
+class TestDumpUInt16(DumpByteOrderBase):
     _DUMP_FUNC = dump_uint16
     _VALUE_MIN = _UINT16_MIN
     _VALUE_MAX = _UINT16_MAX
@@ -379,7 +379,7 @@ class TestDumpUInt16(DumpEndianBase):
     _VALUE_MAX_BYTES_BIG = _UINT16_MAX_BYTES_BIG
 
 
-class TestDumpInt32(DumpEndianBase):
+class TestDumpInt32(DumpByteOrderBase):
     _DUMP_FUNC = dump_int32
     _VALUE_MIN = _INT32_MIN
     _VALUE_MAX = _INT32_MAX
@@ -389,7 +389,7 @@ class TestDumpInt32(DumpEndianBase):
     _VALUE_MAX_BYTES_BIG = _INT32_MAX_BYTES_BIG
 
 
-class TestDumpUInt32(DumpEndianBase):
+class TestDumpUInt32(DumpByteOrderBase):
     _DUMP_FUNC = dump_uint32
     _VALUE_MIN = _UINT32_MIN
     _VALUE_MAX = _UINT32_MAX
@@ -399,7 +399,7 @@ class TestDumpUInt32(DumpEndianBase):
     _VALUE_MAX_BYTES_BIG = _UINT32_MAX_BYTES_BIG
 
 
-class TestDumpInt64(DumpEndianBase):
+class TestDumpInt64(DumpByteOrderBase):
     _DUMP_FUNC = dump_int64
     _VALUE_MIN = _INT64_MIN
     _VALUE_MAX = _INT64_MAX
@@ -409,7 +409,7 @@ class TestDumpInt64(DumpEndianBase):
     _VALUE_MAX_BYTES_BIG = _INT64_MAX_BYTES_BIG
 
 
-class TestDumpUInt64(DumpEndianBase):
+class TestDumpUInt64(DumpByteOrderBase):
     _DUMP_FUNC = dump_uint64
     _VALUE_MIN = _UINT64_MIN
     _VALUE_MAX = _UINT64_MAX
@@ -424,10 +424,10 @@ class TestDumpFloat32:
         assert dump_float32(_FLOAT32) == _FLOAT32_BYTES
 
     def test_dump_float32_little(self):
-        assert dump_float32(_FLOAT32, Endian.LITTLE) == _FLOAT32_BYTES_LITTLE
+        assert dump_float32(_FLOAT32, ByteOrder.LITTLE) == _FLOAT32_BYTES_LITTLE
 
     def test_dump_float32_big(self):
-        assert dump_float32(_FLOAT32, Endian.BIG) == _FLOAT32_BYTES_BIG
+        assert dump_float32(_FLOAT32, ByteOrder.BIG) == _FLOAT32_BYTES_BIG
 
     def test_dump_float32_raises_type_error_on_none(self):
         with pytest.raises(TypeError, match=_TYPE_ERROR_DUMP_REGEX):
@@ -449,10 +449,10 @@ class TestDumpFloat64:
         assert dump_float64(_FLOAT64) == _FLOAT64_BYTES
 
     def test_dump_float64_little(self):
-        assert dump_float64(_FLOAT64, Endian.LITTLE) == _FLOAT64_BYTES_LITTLE
+        assert dump_float64(_FLOAT64, ByteOrder.LITTLE) == _FLOAT64_BYTES_LITTLE
 
     def test_dump_float64_big(self):
-        assert dump_float64(_FLOAT64, Endian.BIG) == _FLOAT64_BYTES_BIG
+        assert dump_float64(_FLOAT64, ByteOrder.BIG) == _FLOAT64_BYTES_BIG
 
     def test_dump_float64_raises_type_error_on_none(self):
         with pytest.raises(TypeError, match=_TYPE_ERROR_DUMP_REGEX):

@@ -1,6 +1,6 @@
 import struct
 import pytest
-from bink.endian import Endian
+from bink.order import ByteOrder
 from bink.stream import BinaryStream, BinaryReader, BinaryWriter
 
 
@@ -69,12 +69,12 @@ class TestBinaryReader:
         assert reader.pos() == 4
 
     def test_read_int32_little(self):
-        reader = BinaryReader(_int_bytes_little, Endian.LITTLE)
+        reader = BinaryReader(_int_bytes_little, ByteOrder.LITTLE)
         assert reader.read_int32() == _int
         assert reader.pos() == 4
 
     def test_read_int32_big(self):
-        reader = BinaryReader(_int_bytes_big, Endian.BIG)
+        reader = BinaryReader(_int_bytes_big, ByteOrder.BIG)
         assert reader.read_int32() == _int
         assert reader.pos() == 4
 
@@ -84,21 +84,21 @@ class TestBinaryReader:
         assert reader.pos() == 4
 
     def test_read_uint32_little(self):
-        reader = BinaryReader(_uint_bytes_little, Endian.LITTLE)
+        reader = BinaryReader(_uint_bytes_little, ByteOrder.LITTLE)
         assert reader.read_uint32() == _uint
         assert reader.pos() == 4
 
     def test_read_uint32_big(self):
-        reader = BinaryReader(_uint_bytes_big, Endian.BIG)
+        reader = BinaryReader(_uint_bytes_big, ByteOrder.BIG)
         assert reader.read_uint32() == _uint
         assert reader.pos() == 4
 
 
 class TestBinaryWriter:
     def setup_method(self):
-        self.writer = BinaryWriter(Endian.NATIVE)
-        self.little_writer = BinaryWriter(Endian.LITTLE)
-        self.big_writer = BinaryWriter(Endian.BIG)
+        self.writer = BinaryWriter(ByteOrder.NATIVE)
+        self.little_writer = BinaryWriter(ByteOrder.LITTLE)
+        self.big_writer = BinaryWriter(ByteOrder.BIG)
 
     def test_write_bytes(self):
         self.writer.write_bytes(bytes(4))
