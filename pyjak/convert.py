@@ -1,6 +1,6 @@
 import struct
 import re
-from bink.order import ByteOrder
+from pyjak.order import ByteOrder
 
 
 class BinaryError(Exception):

@@ -1,5 +1,5 @@
 import sys
-from bink.order import ByteOrder
+from pyjak.order import ByteOrder
 
 
 class TestByteOrder:
