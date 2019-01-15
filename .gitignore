@@ -1,4 +1,7 @@
 .pytest_cache/
+pyjak.egg-info/
+build/
+dist/
 __pycache__/
 .vscode/
 *.pyc

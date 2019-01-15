@@ -6,7 +6,11 @@ you and present a slick api with sane exception handling.
 
 [![Build Status](https://travis-ci.org/miniwa/pyjak.svg?branch=master)](https://travis-ci.org/miniwa/pyjak)
 
+## Installation
 
+The easiest way to install is through pip:
+
+`pip3 install pyjak`
 
 ## Examples
 
@@ -141,6 +145,13 @@ unsigned 1 byte integer, where 0 means False and any other value means True.
 * float64 (8 byte double precision float)
 * bool (unsigned 1 byte integer)
 
+## Supported versions
+
+* Python 3.4
+* Python 3.5
+* Python 3.6
+* Python 3.7
+
 ## Issues
 
 Report issues using the [issue tracker](https://github.com/miniwa/pyjak/issues) on the github repo.
@@ -150,6 +161,10 @@ Report issues using the [issue tracker](https://github.com/miniwa/pyjak/issues) 
 ### v0.1.0
 
 * Initial release.
+
+## Authors
+
+* Max Byrde (miniwa)
 
 ## License
 
