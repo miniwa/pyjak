@@ -437,12 +437,12 @@ def _dump_from_format(_format, value, order=None):
         # Hack to check if error was caused by argument out of bounds.
         elif (msg == _STRUCT_ARG_OOR1 or _STRUCT_ARG_OOR2.search(msg) or
                 msg == _STRUCT_ARG_TOO_LARGE):
-            _raise_mismatch(fixed_format, value)
+            raise _mismatch(fixed_format, value)
         else:
             raise BinaryError(
                 "Could not dump number {0}.".format(value)) from e
     except OverflowError as e:
-        _raise_mismatch(fixed_format, value)
+        raise _mismatch(fixed_format, value)
 
 
 def _format_with_order(_format, order=None):
@@ -452,8 +452,8 @@ def _format_with_order(_format, order=None):
     return order_char + _format
 
 
-def _raise_mismatch(_format, value):
+def _mismatch(_format, value):
     calced_size = struct.calcsize(_format)
-    raise BinarySizeMismatch(
-        "Number {0} requires more than {1} bytes to store."
-        .format(value, calced_size))
+    msg = "Number {0} requires a different sign or more than " +\
+        "{1} bytes to store."
+    return BinarySizeMismatch(msg.format(value, calced_size))
