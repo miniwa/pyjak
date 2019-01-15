@@ -143,7 +143,7 @@ unsigned 1 byte integer, where 0 means False and any other value means True.
 
 ## Issues
 
-Report issues using the issue tracker on the github repo.
+Report issues using the [issue tracker](https://github.com/miniwa/pyjak/issues) on the github repo.
 
 ## Changelog
 
